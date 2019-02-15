@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="exercise.js"></script>
+  <script
+			  src="http://code.jquery.com/jquery-3.3.1.js"></script>
+  <title>Mi primer servidor web</title>
+</head>
+<body>
+  <h1>Pagina Alumnos </h1>
+  <form id="forma" method="post" action="Analizar">
+  <input id="nombre" name="nombre"  name="name" placeholder="Nombre del alumno" type="text"/>
+  <input id="clave" name="clave"  placeholder="clave del alumno" type="text"/>
+
+  <button type="submit" id="entrar">Ingresar</button>
+
+</form>
+  <!--tener dos inputs el la clave del alumno y el nombre del alumno
+  
+  www.w3schools.com
+
+  jquery.post() 
+  
+  -->
+
+  <!--<div id="contenido"></div>-->
+
+  <script> 
+  $(document).ready(function(){
+console.log("ready");
+$("#contenido").html("hola mundo jquery");
+
+  });
+ 
+  
+  </script>
+   
+
+
+
+</body>
+
+
+</html>
