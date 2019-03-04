@@ -1,18 +1,16 @@
 {
   "name": "exc06",
   "version": "1.0.0",
-  "description": "Ejercicio Express,Jquery,POST,GET v2 ",
+  "description": "Actividad Final",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no especificado\" && exit 1"
   },
   "keywords": [
-    "ejercicio",
-    "practica",
     "express",
     "node"
   ],
-  "author": "L. Guillermo Canto",
+  "author": "Fernando de Jesus Martinez Zaragoza",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
