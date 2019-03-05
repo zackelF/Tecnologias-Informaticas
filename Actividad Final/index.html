@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Activity Finaly</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <h3 class="shadow display-3 bg-dark text-white rounded">Actividad Completa <p class="text-info">Fernando </p></h3>
+        <p class="shadow  bg-dark text-white rounded">Tecnologias Informaticas</p>
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                        <div class="shadow rounded alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong id="alerta">Aqui se muestran los resultados =)</strong>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                    <form class="form-group shadow-lg rounded" action="">
+                        <label for="Nombre">Nombre: </label>
+                        <input class="form-control" type="text" placeholder="Nombre" name="nombre" id="nombre">
+                        <label for="Clave">Clave: </label>
+                        <input class="form-control" type="text" placeholder="Clave" name="clave" id="clave">
+                        <button class="form-control" id="act" type="button"><i
+                                class="text-primary fas fa-save">Agregar</i> </button>
+                    </form>
+
+
+                    
+                </div>
+                <div class="shadow-lg col-8">
+                        <div>
+                                <h4> Lista de Alumnos </h4>
+                                <ul id="lista-alumnos" class="list-group">
+                    
+                                </ul>
+                            </div>
+                </div>
+            </div>
+            
+        </div>
+
+  
+  
+
+    </div>
+</body>
+
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Alumno</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="claveEdit" name="nombreEdit" placeholder="Clave">
+                    <input type="text" name="nombreEdit" id="nombreEdit" placeholder="Nombre">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="SaveEdit">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //cunado el documento este listo y todos los objetos 
+    $(document).ready(function () {
+
+        //Una vez que este listo el documento obtendremos la lista de alumnos y la mostraremos.
+        getAlumnos();
+
+        //Programacion del boton act para obtener datos del input.
+        $("#act").on("click", function (event) {
+            console.log(event);
+            var alumno = {}; //Creacion de objeto con la info necesaria.
+            alumno.nombre = $("#nombre").val();
+            alumno.clave = $("#clave").val();
+            //Invocamos a la funcion para llamadas post y mandamos el obeto.
+            sendPOSTRequest(alumno);
+        });
+
+        $('#editModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // el botton que invoca al modal
+            var clave = button.data('clave'); //  data-* attributes
+            var nombre = button.data('nombre');
+            // se puede realizar una busqueda del objeto usando la misma API si tuviera mas propiedades.
+            var modal = $(this);
+            modal.find('.modal-title').text('Edicion del Alumno: ' + clave);
+            modal.find('.modal-body input#claveEdit').val(clave);
+            modal.find('.modal-body input#nombreEdit').val(nombre);
+            modal.find('.modal-footer button#SaveEdit').unbind().on('click', (event) => {
+                console.log("Guardando Alumno: " + clave);
+                var nombreNew = modal.find('.modal-body input#nombreEdit').val();
+                var claveNew = modal.find('.modal-body input#claveEdit').val();
+                var alumno = { 'claveOld': clave, 'claveNew': claveNew, 'nombreNew': nombreNew };
+                console.log(alumno);
+                sendPUTRequest(alumno);
+                modal.modal('hide');
+            });
+        });
+
+    });
+
+    function getAlumnos() {
+        //LLamada GET para obtener los alumnos
+        //Se muestra resultado con una lista en HTML
+        //Se utiliza un ciclo for y se genera el codigo HTML
+        //Usando Jquery se coloca el HTML en la lista.
+        $.get("http://localhost:3000/alumnos", function (data) {
+            var listHTML = "";
+            console.log(data);
+            data.forEach(alumno => {
+                listHTML += "<li class='shadow-lg list-group-item rounded'>" +
+                    " <button type='button' class='delete btn btn-danger btn-sm' data-clave='" + alumno.clave + "'><i class='fas fa-trash-alt'>Borrar</i></button> " +
+                    " <button type='button' class='edit btn btn-warning btn-sm' data-clave='" + alumno.clave + "' data-nombre='" + alumno.nombre + "' data-toggle='modal' data-target='#editModal'><i class='far fa-edit'>Editar</i></button> " +
+                    "<p class='text-info'> Clave : "+"</p>" + alumno.clave + "<p class='text-primary'> Nombre: "+"</p>" + alumno.nombre + " </li>";
+            });
+            $("#lista-alumnos").html(listHTML);
+
+            //Programacion para los botones delete
+            $(".delete").on("click", (event) => {
+                console.log("Button delete");
+                console.log(event.target);
+                sendDELETERequest({ "clave": event.target.dataset["clave"] });
+            });
+        });
+    }
+
+    function sendPOSTRequest(body_object) {
+        //Llamada post al backend usando jquery.
+
+        $.post("http://localhost:3000/alumnos", body_object,
+            function () {
+                document.getElementById("alerta").innerHTML = "Alumno guardado ";
+                //Actualizamos la lista html para ver los cambios.
+                getAlumnos();
+            });
+    }
+
+    function sendDELETERequest(body_object) {
+        //Llamada delete al backend por medio de jquery
+
+        $.ajax({
+            method: "DELETE",
+            url: "http://localhost:3000/alumnos",
+            data: body_object
+        })
+            .done(function (msg) {
+                document.getElementById("alerta").innerHTML = "Alumno eliminado: "+ body_object.clave;
+            })
+            .fail(function (msg) {
+                document.getElementById("alerta").innerHTML = "Error al eliminar alumno: " + body_object.clave;
+
+            });
+        getAlumnos();
+    }
+
+    function sendPUTRequest(body_object) {
+
+        $.ajax({
+            method: "PUT",
+            url: "http://localhost:3000/alumnos",
+            data: body_object
+        })
+            .done(function (msg) {
+
+               
+            })
+            .fail(function (msg) {
+                document.getElementById("alerta").innerHTML = "Error al editar alumno: " + body_object.claveOld;
+
+            });
+        getAlumnos();
+    }
+
+</script>
+
+</html>
